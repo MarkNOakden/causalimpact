@@ -674,3 +674,5 @@ class CausalImpact(object):
             plt.title('Cumulative Impact')
         plt.xlabel('$T$')
         plt.show()
+        return plt.gcf()
+        
