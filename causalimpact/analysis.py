@@ -215,6 +215,7 @@ class CausalImpact(object):
         # Parse <model_args>, fill gaps using <_defaults>
 
         _defaults = {"niter": 1000, "standardize_data": True,
+                     "maxfun": 15000,
                      "prior_level_sd": 0.01,
                      "nseasons": 1,
                      "season_duration": 1,
@@ -272,7 +273,7 @@ class CausalImpact(object):
         return kwargs
 
     def _run_with_data(self, data, pre_period, post_period, model_args, alpha,
-                       estimation):
+                       estimation, verbose=False):
         # Zoom in on data in modeling range
         if data.shape[1] == 1:  # no exogenous values provided
             raise ValueError("data contains no exogenous variables")
@@ -295,7 +296,10 @@ class CausalImpact(object):
 
         # Construct model and perform inference
         ucm_model = construct_model(self, df_pre, model_args)
-        res = model_fit(self, ucm_model, estimation, model_args["niter"])
+        res = model_fit(self, ucm_model, estimation, model_args["niter"], model_args["maxfun"])
+
+        if verbose:
+            print(res.summary())
 
         inferences = compile_posterior_inferences(res, data, df_pre, df_post, None,
                                                   alpha, orig_std_params,
@@ -306,7 +310,7 @@ class CausalImpact(object):
         self.model = ucm_model
 
     def _run_with_ucm(self, ucm_model, post_period_response, alpha, model_args,
-                      estimation):
+                      estimation, verbose=False):
         """ Runs an impact analysis on top of a ucm model.
 
            Args:
@@ -332,7 +336,11 @@ class CausalImpact(object):
         df_pre = pd.DataFrame(df_pre)
         post_period_response = pd.DataFrame(post_period_response)
         orig_std_params = (0, 1)
-        res = model_fit(self, ucm_model, estimation, model_args["niter"])
+        res = model_fit(self, ucm_model, estimation, model_args["niter"], model_args["maxfun"])
+
+        if verbose:
+            print(res.summary())
+
         # Compile posterior inferences
         inferences = compile_posterior_inferences(res, df_pre, None,
                                                   post_period_response, alpha,

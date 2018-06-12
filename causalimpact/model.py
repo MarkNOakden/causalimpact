@@ -94,9 +94,9 @@ def construct_model(self, data, model_args=None):
             raise NotImplementedError()
 
 
-def model_fit(self, model, estimation, niter):
+def model_fit(self, model, estimation, niter, maxfun):
     if estimation == "MLE":
-        model = model.fit(maxiter=niter)
+        model = model.fit(maxiter=niter, maxfun=maxfun)
         self.model = model
         return self.model
     else:
