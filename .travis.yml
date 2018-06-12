@@ -38,11 +38,11 @@ install:
   - DEPS="numpy scipy pip nose pytest pandas=0.20 statsmodels=0.8.0"
   - conda create -q -n test-environment python=$PYTHON $DEPS
   - source activate test-environment
-  - if [ ${COVERAGE} = true ]; then export COVERAGE_OPTS=" --cov-config=.travis_coveragerc --cov=causalimpact "; else export COVERAGE_OPTS=""; fi
-  - if [ ${COVERAGE} = true ]; then pip install codecov coverage coveralls pytest-cov; fi
+  - if [ ${COVERAGE:-false} = true ]; then export COVERAGE_OPTS=" --cov-config=.travis_coveragerc --cov=causalimpact "; else export COVERAGE_OPTS=""; fi
+  - if [ ${COVERAGE:-false} = true ]; then pip install codecov coverage coveralls pytest-cov; fi
   - python setup.py install
 script:
   - pytest ${COVERAGE_OPTS} causalimpact
 after_success:
-  - if [ ${COVERAGE} = true ]; then coveralls --rcfile=.travis_coveragerc; fi
-  - if [ ${COVERAGE} = true ]; then codecov; fi
+  - if [ ${COVERAGE:-false} = true ]; then coveralls --rcfile=.travis_coveragerc; fi
+  - if [ ${COVERAGE:-false} = true ]; then codecov; fi
