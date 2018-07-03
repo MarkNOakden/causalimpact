@@ -342,7 +342,9 @@ class CausalImpact(object):
             print(res.summary())
 
         # Compile posterior inferences
-        inferences = compile_posterior_inferences(res, df_pre, None,
+        # MNO: assume that the missing argument here was meant to be 
+        # data_modeling
+        inferences = compile_posterior_inferences(res, data_modeling, df_pre, None,
                                                   post_period_response, alpha,
                                                   orig_std_params, estimation)
         obs_inter = pre_len = res.model.nobs - len(post_period_response)
